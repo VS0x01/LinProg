@@ -8,7 +8,7 @@ double **ab;
 void gaussjordan(int);
 
 int main() {
-    int n, s;
+    int n;
 
     cout << "AX=B" << endl;
     begin:
