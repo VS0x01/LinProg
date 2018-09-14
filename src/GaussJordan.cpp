@@ -33,7 +33,7 @@ void GaussJordan::setResolving() {
     }
 
     if (ab[resolving][j] != 1) {
-        for (int k = n; k >= 0; --k) {
+        for (int k = n; k >= j; --k) {
             ab[resolving][k] = ab[resolving][k] != 0 ? ab[resolving][k] / ab[resolving][j] : ab[resolving][k];
         }
     }
