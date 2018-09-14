@@ -11,7 +11,6 @@ int main() {
     int n;
 
     cout << "AX=B" << endl;
-    begin:
     cout << "Input rank of the matrix A" << endl;
     cin >> n;
     cout << "Input matrix A" << endl;
