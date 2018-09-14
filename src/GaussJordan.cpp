@@ -44,7 +44,8 @@ void GaussJordan::setResolving() {
 }
 
 std::string GaussJordan::getResult() {
-    std::ostringstream result("Result: ");
+    std::ostringstream result;
+    result << "Result: ";
 
     for (int k = 0; k < n; ++k) {
         result << ab[k][n] << " ";
