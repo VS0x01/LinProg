@@ -75,7 +75,7 @@ bool Simplex::checkBasis() {
                 c++;
             }
         }
-        if (c == 3) return true;
+        if (c == n) return true;
     }
     return false;
 }
