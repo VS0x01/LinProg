@@ -8,13 +8,24 @@
 #include <iostream>
 
 class Simplex {
-    double **ab, **st;
-    double *a;
-    int n, m;
-    int ijk[3] = {-1, -1, -1}; //j of vector
-    int resi, resj, values = n, result; //resolving i, j; f valuation; results j
+    int n, m, cm; //dimensions, copy m
+    double **ab, **cab, **st, **fst; // matrix A and B and copy, simplex matrix, fake simplex matrix
+    double *a, *fa; //coefficients and fake coefficients
+    bool artbasis = false;
+    int *ijk; //j of basis vectors (i, j, k, ...)
+    int *ijksti; //order of basis vectors (i, j, k, ...) in st (i)
+    int *ijkstj; //order of basis vectors (i, j, k, ...) in st (j)
+    int resi, resj;  //resolving i, j
+    const int values = n; // f valuation
+    const int result = m - n; // results j
 
     void simplexTable();
+
+    void fakeSimplexTable(int m);
+
+    bool isBasisVector(int j);
+
+    int findBasisVector(int j);
 
     double valueCount(int j);
 
