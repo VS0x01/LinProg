@@ -54,9 +54,11 @@ void Simplex::simplexTable() {
     for (int i = 0; i < n; ++i) {
         st[i][m - n] = ab[i][m];
     }
-    for (int j = 0, js = 0; js < m + 1 - n; ++j, ++js) {
-        if (!isBasisVector(j)) st[values][js] = valueCount(j);
-        else st[values][js] = valueCount(++j);
+    for (int j = 0, js = 0; js < m + 1 - n; ++j) {
+        if (!isBasisVector(j)) {
+            st[values][js] = valueCount(j);
+            ++js;
+        }
     }
 }
 
