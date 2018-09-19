@@ -15,9 +15,8 @@ class Simplex {
     int *ijk; //j of basis vectors (i, j, k, ...)
     int *ijksti; //order of basis vectors (i, j, k, ...) in st (i)
     int *ijkstj; //order of basis vectors (i, j, k, ...) in st (j)
-    int resi, resj;  //resolving i, j
+    int resi, resj, result;  //resolving i, j, results j
     const int values = n; // f valuation
-    const int result = m - n; // results j
 
     void simplexTable();
 

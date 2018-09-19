@@ -36,6 +36,7 @@ void Simplex::simplexTable() {
     }
     ijksti = new int[m];
     ijkstj = new int[m - n];
+    result = m - n;
     for (int i = 0; i < m + 1 - n; ++i) {
         ijkstj[i] = -1;
     }
