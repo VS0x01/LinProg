@@ -13,7 +13,8 @@ Simplex::Simplex(double **ab, int n, int m) : ab(ab), n(n), m(m) {
     /*1 -1 1 0 0
     1 1 0 -1 0
     -1 1 0 0 1*/
-    a = new double[m];
+    a = new double[m + 1];
+    a[m] = 0;
     std::cout << "Input vars` coefficients of the objective function f(X) -> max" << std::endl;
     for (int i = 0; i < m; ++i) {
         std::cin >> a[i];
@@ -59,7 +60,7 @@ void Simplex::simplexTable() {
     for (int i = 0; i < n; ++i) {
         st[i][m - n] = ab[i][m];
     }
-    for (int j = 0, js = 0; j < n; ++j) {
+    for (int j = 0, js = 0; j < m + 1; ++j) {
         if (!isBasisVector(j)) {
             st[values][js] = valueCount(j);
             nbstj[j] = js;
