@@ -71,10 +71,9 @@ void Simplex::simplexTable() {
         setResolving();
         if (checkUnsolvability()) {
             std::cout << "No optimal solves" << std::endl;
+            return;
         }
     }
-    if (st[values][result] >= 0) return;
-    else std::cout << "No optimal solves" << std::endl;
 }
 
 void Simplex::fakeSimplexTable(int m) {
@@ -145,6 +144,7 @@ bool Simplex::checkValues() {
 }
 
 bool Simplex::checkUnsolvability() {
+    if (st[values][result] >= 0) return false;
     return st[values][result] < tmpresult;
 }
 
