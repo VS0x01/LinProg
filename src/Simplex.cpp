@@ -144,8 +144,7 @@ bool Simplex::checkValues() {
 }
 
 bool Simplex::checkUnsolvability() {
-    if (st[values][result] >= 0) return false;
-    return st[values][result] < tmpresult;
+    return st[values][result] < 0 || st[values][result] < tmpresult;
 }
 
 void Simplex::setResolving() {
