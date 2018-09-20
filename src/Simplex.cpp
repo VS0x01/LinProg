@@ -3,6 +3,7 @@
 //
 
 #include <Simplex.h>
+#include <cmath>
 
 Simplex::Simplex(double **ab, int n, int m) : ab(ab), n(n), m(m) {
     /*1 -2 1 0 0
@@ -35,10 +36,13 @@ void Simplex::simplexTable() {
         st[i] = new double[m + 1 - n];
     }
     ijksti = new int[m];
-    ijkstj = new int[m - n];
+    ijkstj = new int[m];
+    nbsti = new int[m];
+    nbstj = new int[m];
     result = m - n;
-    for (int i = 0; i < m + 1 - n; ++i) {
-        ijkstj[i] = -1;
+    for (int j = 0; j < m; ++j) {
+        ijkstj[j] = -1;
+        nbsti[j] = -1;
     }
     for (int i = 0; i < n; ++i) {
         ijksti[ijk[i]] = i;
@@ -55,12 +59,22 @@ void Simplex::simplexTable() {
     for (int i = 0; i < n; ++i) {
         st[i][m - n] = ab[i][m];
     }
-    for (int j = 0, js = 0; js < m + 1 - n; ++j) {
+    for (int j = 0, js = 0; j < n; ++j) {
         if (!isBasisVector(j)) {
             st[values][js] = valueCount(j);
+            nbstj[j] = js;
             ++js;
         }
     }
+    while (!checkValues()) {
+        printTable();
+        setResolving();
+        if (checkUnsolvability()) {
+            std::cout << "No optimal solves" << std::endl;
+        }
+    }
+    if (st[values][result] >= 0) return;
+    else std::cout << "No optimal solves" << std::endl;
 }
 
 void Simplex::fakeSimplexTable(int m) {
@@ -119,8 +133,68 @@ double Simplex::valueCount(int j) {
     }
 }
 
-void Simplex::setResolving() {
+bool Simplex::checkValues() {
+    tmpresult = st[values][result];
+    for (int j = 0; j < m - n; ++j) {
+        if (st[values][j] < 0) {
+            resj = j;
+            return false;
+        }
+    }
+    return true;
+}
 
+bool Simplex::checkUnsolvability() {
+    return st[values][result] < tmpresult;
+}
+
+void Simplex::setResolving() {
+    for (int j = 0; j < m - n; ++j) {
+        if (fabs(st[values][j]) > fabs(st[values][resj]) && st[values][j] < 0) resj = j;
+    }
+    double tmp = 0;
+    for (int i = 0; i < n; ++i) {
+        if (st[i][resj] != 0 && st[i][result] / st[i][resj] > 0) {
+            tmp = st[i][result] / st[i][resj];
+            resi = i;
+            break;
+        }
+    }
+    for (int i = resi + 1; i < n; ++i) {
+        if (st[i][resj] != 0 && st[i][result] / st[i][resj] > 0 && st[i][result] / st[i][resj] < tmp) {
+            tmp = st[i][result] / st[i][resj];
+            resi = i;
+        }
+    }
+    ijksti[ijk[resi]] = -1;
+    ijkstj[ijk[resi]] = resj;
+    nbsti[resj] = resi;
+    nbstj[resj] = -1;
+    changeJordan();
+}
+
+void Simplex::changeJordan() {
+    oldst = new double *[n + 1];
+    for (int i = 0; i < n + 1; ++i) {
+        oldst[i] = new double[m + 1 - n];
+        for (int j = 0; j < m + 1 - n; ++j) {
+            oldst[i][j] = st[i][j];
+        }
+    }
+    st[resi][resj] = 1 / st[resi][resj];
+    for (int i = 0; i < n + 1; ++i) {
+        if (i != resi) st[i][resj] *= (-st[resi][resj]);
+    }
+    for (int j = 0; j < m + 1 - n; ++j) {
+        if (j != resj) st[resi][j] *= (st[resi][resj]);
+    }
+    for (int i = 0; i < n + 1; ++i) {
+        if (i == resi) continue;
+        for (int j = 0; j < m + 1 - n; ++j) {
+            if (j == resj) continue;
+            st[i][j] = (oldst[resi][resj] * oldst[i][j] - oldst[resi][j] * oldst[i][resj]) / oldst[resi][resj];
+        }
+    }
 }
 
 bool Simplex::checkBasis() {
@@ -171,18 +245,21 @@ void Simplex::fakeBasis() {
 }
 
 double Simplex::getResult() const {
-    /*std::cout << "X*(";
+    std::cout << "X* (";
     for (int i = 0; i < n; ++i) {
-        std::cout << st[n][result] << ",";
+        std::cout << " " << st[i][result] << " ";
 
     }
     std::cout << ")" << std::endl;
-    return st[n][result];*/
+    return st[n][result];
+}
+
+void Simplex::printTable() {
     for (int i = 0; i < n + 1; ++i) {
         for (int j = 0; j < m + 1 - n; ++j) {
             std::cout << st[i][j] << '\t';
         }
         std::cout << std::endl;
     }
-    return 0.1;
+    std::cout << std::endl;
 }
