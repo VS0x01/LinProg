@@ -13,10 +13,8 @@ class Simplex {
     double *a, *fa; //coefficients and fake coefficients
     bool artbasis = false;
     int *ijk; //j of basis vectors (i, j, k, ...)
-    int *ijksti; //order of basis vectors (i, j, k, ...) in st (i)
-    int *ijkstj; //order of basis vectors (i, j, k, ...) in st (j)
-    int *nbsti; //order of non-basis vectors in st (j)
-    int *nbstj; //order of non-basis vectors in st (j)
+    int *vsti; //order of vectors in st (i)
+    int *vstj; // -||- (j)
     int resi, resj, result;  //resolving i, j, results j
     double tmpresult = 0;
     const int values = n; // f valuation

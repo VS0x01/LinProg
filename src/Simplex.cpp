@@ -6,17 +6,6 @@
 #include <cmath>
 
 Simplex::Simplex(double **ab, int n, int m) : ab(ab), n(n), m(m) {
-    /*1 -2 1 0 0
-    -2 1 0 1 0
-    2 1 0 0 1*/
-
-    /*1 -1 1 0 0
-    1 1 0 -1 0
-    -1 1 0 0 1*/
-
-    /*-1 1 1 0 0
-    1 -1 0 1 0
-    1 -2 0 0 1*/
     bool transform;
     a = new double[m + 1];
     a[m] = 0;
@@ -49,8 +38,7 @@ Simplex::Simplex(double **ab, int n, int m) : ab(ab), n(n), m(m) {
                 js++;
             } else {
                 for (int i = 0; i < m; ++i) {
-                    if (ijkstj[i] > *oi) ijkstj[i]--;
-                    else if (nbstj[i] > *oi) nbstj[i]--;
+                    if (vstj[i] > *oi) vstj[i]--;
                 }
             }
         }
@@ -70,19 +58,15 @@ void Simplex::simplexTable() {
     for (int i = 0; i < n + 1; ++i) {
         st[i] = new double[m + 1 - n];
     }
-    ijksti = new int[m];
-    ijkstj = new int[m];
-    nbsti = new int[m];
-    nbstj = new int[m];
+    vsti = new int[m];
+    vstj = new int[m];
     result = m - n;
     for (int j = 0; j < m; ++j) {
-        ijkstj[j] = -1;
-        ijksti[j] = -1;
-        nbsti[j] = -1;
-        nbstj[j] = -1;
+        vsti[j] = -1;
+        vstj[j] = -1;
     }
     for (int i = 0; i < n; ++i) {
-        ijksti[ijk[i]] = i;
+        vsti[ijk[i]] = i;
     }
 
     for (int j = 0, js = 0; j < m; ++j) {
@@ -99,7 +83,7 @@ void Simplex::simplexTable() {
     for (int j = 0, js = 0; j < m + 1; ++j) {
         if (!isBasisVector(j)) {
             st[values][js] = valueCount(j);
-            nbstj[j] = js;
+            vstj[j] = js;
             ++js;
         }
     }
@@ -154,7 +138,7 @@ bool Simplex::isBasisVector(int j) {
 
 bool Simplex::isArtBasisVector(int j, int *oi) {
     for (int i = m; i < cm; ++i) {
-        if (ijkstj[i] == j) {
+        if (vstj[i] == j) {
             *oi = j;
             return true;
         }
@@ -188,11 +172,11 @@ double Simplex::fixValue(int j) {
     double a = 0;
     double ai[n];
     for (int i = 0; i < m; ++i) {
-        if (ijkstj[i] == j || nbstj[i] == j) a = this->a[i];
+        if (vstj[i] == j) a = this->a[i];
     }
     for (int si = 0; si < n; ++si) {
         for (int i = 0; i < m; ++i) {
-            if (ijksti[i] == si || nbsti[i] == si) {
+            if (vsti[i] == si) {
                 ai[si] = this->a[i];
             }
         }
@@ -236,10 +220,15 @@ void Simplex::setResolving() {
             resi = i;
         }
     }
-    ijksti[ijk[resi]] = -1;
-    ijkstj[ijk[resi]] = resj;
-    nbsti[resj] = resi;
-    nbstj[resj] = -1;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < m; ++j) {
+            if (vsti[i] == resi && vstj[j] == resj) {
+                std::swap(vsti[i], vsti[j]);
+                std::swap(vstj[i], vstj[j]);
+                return;
+            }
+        }
+    }
 }
 
 void Simplex::changeJordan() {
@@ -315,16 +304,10 @@ void Simplex::fakeBasis() {
 
 double Simplex::getResult() const {
     std::cout << "X* (";
-    int rj[n]; // result`s j numbers
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            rj[i] = ijksti[j] == i ? j : nbsti[j] == i ? j : -1;
-            if (rj[i] != (-1)) break;
+    for (int j = 0; j < m; ++j) {
+        if (a[j] != 0) {
+            std::cout << '\t' << j + 1 << ":" << (vsti[j] != (-1) ? st[vsti[j]][result] : 0) << '\t';
         }
-    }
-    for (int i = 0; i < n; ++i) {
-        if (a[rj[i]] != 0) std::cout << " " << rj[i] + 1 << ":" << st[i][result] << " ";
-
     }
     std::cout << ")" << std::endl;
     return st[n][result];
@@ -332,7 +315,7 @@ double Simplex::getResult() const {
 
 void Simplex::printTable() {
     for (int i = 0; i < m; ++i) {
-        std::cout << ijksti[i] << '\t' << ijkstj[i] << '\t' << nbsti[i] << '\t' << nbstj[i] << std::endl;
+        std::cout << vsti[i] << '\t' << vstj[i] << "\t" << std::endl;
     }
     std::cout << std::endl;
 
