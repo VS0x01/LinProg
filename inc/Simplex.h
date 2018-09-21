@@ -23,13 +23,19 @@ class Simplex {
 
     void simplexTable();
 
+    bool transformTable();
+
     void fakeSimplexTable(int m);
 
     bool isBasisVector(int j);
 
+    bool isArtBasisVector(int j, int *oi);
+
     int findBasisVector(int j);
 
     double valueCount(int j);
+
+    double fixValue(int j);
 
     bool checkValues();
 
