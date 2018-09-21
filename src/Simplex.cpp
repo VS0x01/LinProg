@@ -13,6 +13,11 @@ Simplex::Simplex(double **ab, int n, int m) : ab(ab), n(n), m(m) {
     /*1 -1 1 0 0
     1 1 0 -1 0
     -1 1 0 0 1*/
+
+    /*-1 1 1 0 0
+    1 -1 0 1 0
+    1 -2 0 0 1*/
+
     a = new double[m + 1];
     a[m] = 0;
     std::cout << "Input vars` coefficients of the objective function f(X) -> max" << std::endl;
@@ -43,7 +48,9 @@ void Simplex::simplexTable() {
     result = m - n;
     for (int j = 0; j < m; ++j) {
         ijkstj[j] = -1;
+        ijksti[j] = -1;
         nbsti[j] = -1;
+        nbstj[j] = -1;
     }
     for (int i = 0; i < n; ++i) {
         ijksti[ijk[i]] = i;
@@ -246,8 +253,15 @@ void Simplex::fakeBasis() {
 
 double Simplex::getResult() const {
     std::cout << "X* (";
+    int rj[n]; // result`s j numbers
     for (int i = 0; i < n; ++i) {
-        std::cout << " " << st[i][result] << " ";
+        for (int j = 0; j < m; ++j) {
+            rj[i] = ijksti[j] == i ? j : nbsti[j] == i ? j : -1;
+            if(rj[i] != (-1)) break;
+        }
+    }
+    for (int i = 0; i < n; ++i) {
+        if(a[rj[i]] != 0) std::cout << " " << rj[i] + 1 << ":" << st[i][result] << " ";
 
     }
     std::cout << ")" << std::endl;
@@ -255,6 +269,11 @@ double Simplex::getResult() const {
 }
 
 void Simplex::printTable() {
+    for (int i = 0; i < m; ++i) {
+        std::cout << ijksti[i] << '\t' << ijkstj[i] << '\t' << nbsti[i] << '\t' << nbstj[i] << std::endl;
+    }
+    std::cout << std::endl;
+
     for (int i = 0; i < n + 1; ++i) {
         for (int j = 0; j < m + 1 - n; ++j) {
             std::cout << st[i][j] << '\t';

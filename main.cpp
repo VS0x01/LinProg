@@ -77,5 +77,5 @@ void simplex(int n, int m) {
     }
     std::cout << std::endl;*/
     Simplex simplex(ab, n, m);
-    cout << simplex.getResult() << endl;
+    cout << "f(X) -> max = "<< simplex.getResult() << endl;
 }
