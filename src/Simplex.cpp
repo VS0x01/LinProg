@@ -13,6 +13,8 @@ Simplex::Simplex(double **ab, int n, int m) : ab(ab), n(n), m(m) {
     for (int i = 0; i < m; ++i) {
         std::cin >> a[i];
     }
+    std::cout << "Input free member of the objective function f(X) -> max" << std::endl;
+    std::cin >> fm;
     ijk = new int[n];
     for (int i = 0; i < n; ++i) {
         ijk[i] = -1;
@@ -310,7 +312,7 @@ double Simplex::getResult() const {
         }
     }
     std::cout << ")" << std::endl;
-    return st[n][result];
+    return st[n][result] + fm;
 }
 
 void Simplex::printTable() {
