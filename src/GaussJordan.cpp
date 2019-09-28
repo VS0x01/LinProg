@@ -34,7 +34,7 @@ void GaussJordan::setResolving() {
 
     if (ab[resolving][j] != 1) {
         for (int k = n; k >= j; --k) {
-            ab[resolving][k] = ab[resolving][k] != 0 ? ab[resolving][k] / ab[resolving][j] : ab[resolving][k];
+            ab[resolving][k] = ab[resolving][k] ? ab[resolving][k] / ab[resolving][j] : ab[resolving][k];
         }
     }
     if (resolving != i) {
@@ -54,9 +54,9 @@ std::string GaussJordan::getResult() {
 }
 
 void GaussJordan::printMatrix() {
-    for (int i1 = 0; i1 < n; ++i1) {
+    for (int k = 0; k < n; ++k) {
         for (int l = 0; l < n + 1; ++l) {
-            std::cout << ab[i1][l] << '\t';
+            std::cout << ab[k][l] << '\t';
         }
         std::cout << std::endl;
     }
