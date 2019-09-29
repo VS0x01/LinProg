@@ -68,14 +68,6 @@ void simplex(int n, int m) {
         cin >> ab[k][m];
     }
 
-    /*std::cout << std::endl;
-    for (int i = 0; i < n; ++i) {
-        for (int l = 0; l < m; ++l) {
-            std::cout << ab[i][l] << '\t';
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;*/
     Simplex simplex(ab, n, m);
     cout << "f(X) -> max = "<< simplex.getResult() << endl;
 }
