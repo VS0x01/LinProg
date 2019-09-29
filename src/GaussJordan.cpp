@@ -29,7 +29,7 @@ GaussJordan::GaussJordan(double **ab, int n) : ab(ab), n(n) {
 void GaussJordan::setResolving() {
     resolving = i;
     for (int k = i; k < n; ++k) {
-        if (fabs(ab[k][j]) < fabs(ab[resolving][j])) resolving = k;
+        if (fabs(ab[k][j]) < fabs(ab[resolving][j]) && ab[k][j]) resolving = k;
     }
 
     if (ab[resolving][j] != 1) {
